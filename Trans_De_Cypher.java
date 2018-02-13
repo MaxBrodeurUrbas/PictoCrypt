@@ -33,6 +33,15 @@ public class Trans_De_Cypher {
 	        
 	    }
 	    	
+	  	 public static int HashPassword (String password) {
+	    		int passwordValue = 0;
+	    	
+	    		for(int i=0; i<password.length(); i++)
+	    			passwordValue += password.charAt(i)* Math.pow(31.0, (double)(password.length()-1-i));
+	    		
+	    		return passwordValue;
+	    }
+	
 		public static void TransCypher(BufferedImage img, int key) {
 			
 			int w = img.getWidth();
