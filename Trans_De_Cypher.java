@@ -87,17 +87,14 @@ public class Trans_De_Cypher {
 		int counter = 0;
 		int[] OneArrayValues = new int[total];
 		int rest = total % key;
+		BufferedImage output = new BufferedImage(w, h, img.getType());
+		boolean devisable = false; 
+		int step = total/key;
+
 		for(int row=0; row < h; row++) 
 			for(int column=0; column < w; column++) 
 				OneArrayValues[counter++] = img.getRGB(column, row);
-			
-	
 		
-		BufferedImage output = new BufferedImage(w, h, img.getType());
-		
-		
-		boolean devisable = false; 
-		int step = total/key;
 		if(rest == 0)
 			devisable = true;
 		else 
