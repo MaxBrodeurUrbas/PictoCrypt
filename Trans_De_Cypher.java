@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 import javax.imageio.ImageIO;
+import javax.lang.model.util.ElementScanner6;
 import java.util.ArrayList;
 
 
@@ -13,40 +14,45 @@ public class Trans_De_Cypher {
     public static void main(String[] args){
         
         BufferedImage img = null;
+        BufferedImage toDecrypt = null;
         String password;
         int passwordValue;
-        
-        System.out.println("Please enter a password between 5 and 20 characters long");
         Scanner scan = new Scanner(System.in);
-        password = scan.next();
+        String option = "";
+        System.out.print("Do you want to encrypt or decrypt a file:");
+        option = scan.nextLine();
+        System.out.println("Please enter a password between 5 and 20 characters long");
+        password = scan.nextLine();
         scan.close();
         passwordValue = HashPassword(password);
+        System.out.println(passwordValue);
+        option = option.toLowerCase();
+        if(option.equals("encrypt")){
+            File  file = new File ("C:\\Users\\Carl\\Desktop\\Carl_ElKhoury_SequenceDiagram.jpg");
+            try {
+                img = ImageIO.read(file);
+            }
+            catch(Exception e){
+                System.out.println(e);
+            }
         
-        File  file = new File ("/Users/maxurbas/Desktop/stevejobs.jpg");
-        try {
-            img = ImageIO.read(file);
-        }
-        catch(Exception e){
-            System.out.println(e);
-        }
-        
-        TransCypher(img,2145);
-        BufferedImage toDecrypt = null;
-        try{
-            toDecrypt = ImageIO.read(new File ("/Users/maxurbas/Desktop/ANSWER.jpg"));
-        }catch(Exception e){
-            System.out.println(e);
-        }
-        TransDeCypher(toDecrypt,passwordValue);
-        return;
-        
+            TransCypher(img,passwordValue);
+    }else if(option.equals("decrypt")){
+            try{
+                toDecrypt = ImageIO.read(new File ("C:\\Users\\Carl\\Desktop\\Carl_ElKhoury_SequenceDiagram1.jpg"));
+            }catch(Exception e){
+                System.out.println(e);
+            }   
+            TransDeCypher(toDecrypt,passwordValue);
+     }else
+        System.out.println("input error");   
     }
-    
+
     public static int HashPassword (String password) {
         int passwordValue = 0;
         
         for(int i=0; i<password.length(); i++)
-            passwordValue += password.charAt(i)* Math.pow(31.0, (double)(password.length()-1-i));
+            passwordValue += password.charAt(i)* (int) Math.pow(31.0, (double)(password.length()-1-i));
         
         return passwordValue;
     }
@@ -58,23 +64,25 @@ public class Trans_De_Cypher {
         int total =  w*h;
         int counter = 0;
         int[] OneArrayValues = new int[total];
-        String secondHash;
         
         //first pixel set to contain key value for later decryption checking
-        secondHash = Integer.toString(key);
-        img.setRGB(0, 0, HashPassword(secondHash));
+        img.setRGB(0, 0, HashPassword(key+""));
+        System.out.println();
         key = key % total;
-        
+      
+        if(key<0)
+            key = -key;
         for(int row=0; row < h; row++) {
             for(int column=0; column < w; column++) {
                 OneArrayValues[counter++] = img.getRGB(column, row);
             }
         }
+      
         BufferedImage output = new BufferedImage(w, h, img.getType());
         
         counter = 0;
         int i = 1;
-        for(int row=0; row < h; row++) {
+        for(int row=0; row < h ; row++) {
             for(int column=0; column < w; column++) {
                 if(counter>= total) {
                     counter = i++;
@@ -86,7 +94,7 @@ public class Trans_De_Cypher {
         
         
         try {
-            ImageIO.write(output, "jpg", new File("/Users/maxurbas/Desktop/ANSWER.jpg"));
+            ImageIO.write(output, "jpg", new File("C:\\Users\\Carl\\Desktop\\Carl_ElKhoury_SequenceDiagram1.jpg"));
         }
         catch(Exception e) {
             System.out.println(e);
@@ -101,16 +109,20 @@ public class Trans_De_Cypher {
         int total =  w*h;
         int counter = 0;
         int[] OneArrayValues = new int[total];
-        int rest = total % key;
         BufferedImage output = new BufferedImage(w, h, img.getType());
         boolean devisable = false;
+        
+        // if (img.getRGB(0,0) != HashPassword(key+"")){
+        //     System.out.println("Your password was incorrect please try again.");
+        //     return;
+        // }
+        
+        if(key<0)
+            key = -key;
+        
+        key %=total;
+        int rest = total % key;
         int step = total/key;
-        
-        if (img.getRGB(0,0) != HashPassword(Integer.toString(key))){
-            System.out.println("Your password was incorrect please try again.");
-            return;
-        }
-        
         for(int row=0; row < h; row++)
             for(int column=0; column < w; column++)
                 OneArrayValues[counter++] = img.getRGB(column, row);
@@ -121,7 +133,6 @@ public class Trans_De_Cypher {
             step++;
         int i = 1;
         counter = 0;
-        System.out.println(total);
         for(int row=0; row < h; row++)
             for(int column=0; column < w; column++) {
                 if(counter>=total) {
@@ -138,12 +149,11 @@ public class Trans_De_Cypher {
                 }
             }
         try {
-            ImageIO.write(output, "jpg", new File("/Users/maxurbas/Desktop/ANSWER_DECYPHER.jpg"));
+            ImageIO.write(output, "jpg", new File("C:\\Users\\Carl\\Desktop\\Carl_ElKhoury_SequenceDiagram2.jpg"));
         }
         catch(Exception e) {
             System.out.println(e);
         }
-        System.out.println("The Operation is a success");
     }
 }
 
